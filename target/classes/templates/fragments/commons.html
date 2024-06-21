@@ -13,20 +13,27 @@
 <header>
     <nav class="navbar navbar-expand-lg bg-nav rounded">
         <a class="nav-link text-primary active h5 text-stroke" th:href="@{/}">Reseller App</a>
-        <a class="nav-link text-primary active h5 text-stroke" th:href="@{offer-add}">Add Offer</a>
+        <a
+                th:if="${@userSession.isLoggedIn()}"
+                class="nav-link text-primary active h5 text-stroke"
+                th:href="@{offer-add}">Add Offer</a>
 
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
             <ul class="navbar-nav row">
-                <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" th:href="@{/users/login}">Login</a>
+                <li class="nav-item col-md-4" th:unless="${@userSession.isLoggedIn()}">
+                    <a class="nav-link text-primary active h5 text-stroke"
+                       th:href="@{/users/login}">Login</a>
                 </li>
 
-                <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" th:href="@{/users/register}">Register</a>
+                <li class="nav-item col-md-4" th:unless="${@userSession.isLoggedIn()}">
+                    <a class="nav-link text-primary active h5 text-stroke"
+                       th:href="@{/users/register}">Register</a>
                 </li>
 
-                <li class="nav-item col-md-4">
-                    <a class="nav-link text-primary active h5 text-stroke" th:href="@{/users/logout}">Logout</a>
+                <li class="nav-item col-md-4 m-3" th:if="${@userSession.isLoggedIn()}"
+                >
+                    <a class="nav-link text-primary active h5 text-stroke"
+                       th:href="@{/users/logout}">Logout</a>
                 </li>
             </ul>
         </div>

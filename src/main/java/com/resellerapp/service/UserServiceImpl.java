@@ -1,6 +1,7 @@
 package com.resellerapp.service;
 
 import com.resellerapp.config.UserSession;
+import com.resellerapp.model.dto.UserLoginDto;
 import com.resellerapp.model.dto.UserRegisterDto;
 import com.resellerapp.model.entity.User;
 import com.resellerapp.repository.UserRepository;
@@ -35,6 +36,23 @@ public class UserServiceImpl {
         user.setUsername(userRegisterDto.getUsername());
         user.setEmail(userRegisterDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
+    public boolean login(UserLoginDto userLoginDto) {
+        if (userSession.isLoggedIn()) {
+            return false;
+        }
+        Optional<User> byUsername = userRepository.findByUsername(userLoginDto.getUsername());
+        if (byUsername.isEmpty()) {
+            return false;
+        }
+        if (!passwordEncoder.matches(userLoginDto.getPassword(), byUsername.get().getPassword())) {
+            return false;
+        }
+        User user = byUsername.orElse(null);
+        userSession.login(user.getId(), user.getUsername());
         userRepository.save(user);
         return true;
     }

@@ -2,6 +2,7 @@ package com.resellerapp.model.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,6 +29,13 @@ public class User {
     @OneToMany
     @JoinColumn(name = "user_id")
     private Set<Offer> boughtOffers;
+
+
+
+    public User() {
+        this.boughtOffers = new HashSet<>();
+        this.offers = new HashSet<>();
+    }
 
     public long getId() {
         return id;

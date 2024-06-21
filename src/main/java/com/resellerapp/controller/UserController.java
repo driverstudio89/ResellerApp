@@ -1,5 +1,6 @@
 package com.resellerapp.controller;
 
+import com.resellerapp.model.dto.UserLoginDto;
 import com.resellerapp.model.dto.UserRegisterDto;
 import com.resellerapp.service.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -23,6 +24,12 @@ public class UserController {
     public UserRegisterDto userRegisterDto() {
         return new UserRegisterDto();
     }
+
+    @ModelAttribute("loginData")
+    public UserLoginDto UserLoginDto() {
+        return new UserLoginDto();
+    }
+
 
     @GetMapping("/users/register")
     public String viewRegister() {
@@ -54,9 +61,35 @@ public class UserController {
         }
 
         return "redirect:/users/login";
-
-
     }
+
+    @GetMapping("/users/login")
+    public String viewLogin() {
+        return "login";
+    }
+
+    @PostMapping("/users/login")
+    public String doLogin(
+            @Valid UserLoginDto userLoginDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("loginData", userLoginDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.loginData", bindingResult);
+            return "redirect:/users/login";
+        }
+
+        if (!userServiceImpl.login(userLoginDto)) {
+            redirectAttributes.addFlashAttribute("wrongCredentials", userLoginDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.loginData", bindingResult);
+            return "redirect:/users/login";
+        }
+
+        return "redirect:/home";
+    }
+
+
 
 
 }
