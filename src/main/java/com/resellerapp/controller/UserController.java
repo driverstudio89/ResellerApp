@@ -1,5 +1,6 @@
 package com.resellerapp.controller;
 
+import com.resellerapp.config.UserSession;
 import com.resellerapp.model.dto.UserLoginDto;
 import com.resellerapp.model.dto.UserRegisterDto;
 import com.resellerapp.service.UserServiceImpl;
@@ -15,9 +16,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
+    private final UserSession userSession;
 
-    public UserController(UserServiceImpl userServiceImpl) {
+    public UserController(UserServiceImpl userServiceImpl, UserSession userSession) {
         this.userServiceImpl = userServiceImpl;
+        this.userSession = userSession;
     }
 
     @ModelAttribute("registerData")
@@ -33,6 +36,9 @@ public class UserController {
 
     @GetMapping("/users/register")
     public String viewRegister() {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
         return "register";
     }
 
@@ -41,6 +47,9 @@ public class UserController {
             @Valid UserRegisterDto userRegisterDto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("registerData", userRegisterDto);
@@ -65,6 +74,9 @@ public class UserController {
 
     @GetMapping("/users/login")
     public String viewLogin() {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
         return "login";
     }
 
@@ -73,6 +85,10 @@ public class UserController {
             @Valid UserLoginDto userLoginDto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
+
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("loginData", userLoginDto);
@@ -87,6 +103,15 @@ public class UserController {
         }
 
         return "redirect:/home";
+    }
+
+    @GetMapping("/users/logout")
+    public String Logout() {
+        if (!userSession.isLoggedIn()) {
+            return "redirect:/";
+        }
+        userServiceImpl.logout();
+        return "redirect:/";
     }
 
 

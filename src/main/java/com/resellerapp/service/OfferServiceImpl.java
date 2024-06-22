@@ -53,4 +53,12 @@ public class OfferServiceImpl {
         return true;
 
     }
+
+    @Transactional
+    public void removeOffer(long offerId) {
+        Offer offer = offerRepository.findById(offerId).orElse(null);
+        User user = userRepository.findById(userSession.getId()).orElse(null);
+        user.getOffers().remove(offer);
+        offerRepository.delete(offer);
+    }
 }

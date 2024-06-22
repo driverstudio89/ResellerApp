@@ -22,15 +22,11 @@ public class User {
     @Column (unique = true, nullable = false)
     private String email;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(targetEntity = Offer.class)
     private Set<Offer> offers;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(targetEntity = Offer.class)
     private Set<Offer> boughtOffers;
-
-
 
     public User() {
         this.boughtOffers = new HashSet<>();
